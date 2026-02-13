@@ -1,4 +1,4 @@
-My Example Voting App
+My Example Voting App - 2026
 =========
 
 Getting started
