@@ -50,8 +50,7 @@ steps{
 echo 'Packaging worker app'
 dir('worker'){
 sh 'mvn package -DskipTests'
-archiveArtifacts artifacts: '**/target/*.jar',
-fingerprint: true
+archiveArtifacts artifacts: '**/target/*.jar',fingerprint: true
 }
 }
 } 
@@ -64,8 +63,7 @@ branch 'master'
 steps{
 echo 'Packaging worker app with docker'
 script{
-docker.withRegistry('https://index.docker.io/v1/',
-'dockerlogin') {
+docker.withRegistry('https://index.docker.io/v1/','dockerlogin') {
 def workerImage =
 docker.build("supun97/worker:v${env.BUILD_ID}", "./worker")
 workerImage.push()
