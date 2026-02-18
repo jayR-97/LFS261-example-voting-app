@@ -1,10 +1,10 @@
-pipeline {
+pipeline{
 agent{
 docker{
 image 'maven:3.9.8-sapmachine-21'
 args '-v $HOME/.m2:/root/.m2'
 }
-} 
+}
 stages{
 stage('build'){
 steps{
@@ -24,7 +24,7 @@ sh 'mvn clean test'
 }
 stage('package'){
 steps{
-echo 'packaging worker app into a jarfile'
+echo 'packaging worker app into a jar file'
 dir('worker'){
 sh 'mvn package -DskipTests'
 archiveArtifacts artifacts: '**/target/*.jar',
@@ -32,7 +32,20 @@ fingerprint: true
 }
 }
 }
+stage('docker-package'){
+agent any
+steps{
+echo 'Packaging worker app with docker'
+script{
+docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
+def workerImage = docker.build("supun97/worker:v$ {env.BUILD_ID}", "./worker")
+workerImage.push()
+workerImage.push("latest")
 }
+}
+}
+}
+} 
 post{
 always{
 echo 'the job is complete'
